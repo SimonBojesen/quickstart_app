@@ -18,9 +18,11 @@ export default class ProfileScreen extends Component {
             this.setState({ userInfo: e.msg });
         }) 
     }
-    logout() {
-        Facade.logout();
-        this.props.navigation.navigate('Profile').then(alert("You have succesfully been logged out"));
+    logout = evt => {
+        evt.preventDefault();
+        Facade.logout()
+        .then(this.props.navigation.navigate('Home'));
+        alert("You have successfully been logged out");
     }
     render() {
         return (

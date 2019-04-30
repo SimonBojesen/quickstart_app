@@ -4,9 +4,7 @@ const URL = "https://simonbojesen.com/jwtbackend";
 
 function handleHttpErrors(res) {
     if (!res.ok) {
-        return Promise.reject({ status: res.status, fullError: res.json() });
-        
-        //return { status: res.status, fullError: res.json() };
+        return { status: res.status, fullError: res.json() };
     }
     return res.json();
 }
@@ -14,32 +12,27 @@ function handleHttpErrors(res) {
 class UserFetch {
 
     fetchData = async () => {
-        var token = await this.getToken();
+        const token = await this.getToken();
+        console.log("token", token);
         var decoded = jwt_decode(token);
         const options = await this.makeOptions("GET", true); //True add's the token
-        console.log("options", options);
-        return fetch(URL + "/api/info/" + decoded.username, options).then(handleHttpErrors).catch(
-            error => alert(JSON.stringify(error))
-        );
-    }
+        return fetch(URL + "/api/info/" + decoded.username, options).then(handleHttpErrors);
+    };
 
-    login = (user, pass) => {
-        const options = this.makeOptions("POST", true, {
+    login = async (user, pass) => {
+        const options = await this.makeOptions("POST", true, {
             username: user,
             password: pass
         });
-        return fetch(URL + "/api/login", options)
-            .then(handleHttpErrors)
-            .then(res => {
-                console.log("result", res);
-                this.setToken(res.token);
-            }).catch(
-                error => alert(error)
-            );
+        const result = await fetch(URL + "/api/login", options)
+            .then(handleHttpErrors);
+            console.log("result", result);
+        this.setToken(result.token);
+        
     };
 
-    setToken = token => {
-        AsyncStorage.setItem("jwtToken", token);
+    setToken = async token => {
+        await AsyncStorage.setItem("jwtToken", token);
     };
 
     getToken = () => {
@@ -51,8 +44,8 @@ class UserFetch {
         return loggedIn;
     };
 
-    logout = () => {
-        AsyncStorage.removeItem("jwtToken");
+    logout = async () => {
+        await AsyncStorage.removeItem("jwtToken");
     };
 
     async makeOptions(method, addToken, body) {
@@ -69,7 +62,6 @@ class UserFetch {
         if (body) {
             opts.body = JSON.stringify(body);
         }
-        console.log(opts);
         return opts;
     }
 }

@@ -15,9 +15,9 @@ export default class LoginScreen extends Component {
         }
     }
 
-    login = evt => {
+    login = async evt => {
         evt.preventDefault();
-        Facade.login(this.state.username, this.state.password);
+        await Facade.login(this.state.username, this.state.password)
         this.props.navigation.navigate('Profile');
         //console.log(this.state.username, this.state.password)
     };
@@ -27,22 +27,20 @@ export default class LoginScreen extends Component {
             <View style={styles.container}>
                 <Text>Login Screen</Text>
                 <TextInput
-                    value="user"
                     placeholder="Enter Username"
                     style={{ width: 200, margin: 10 }}
                     onChangeText={username => this.setState({ username })}
                 />
 
                 <TextInput
-                    value="userpw"
                     placeholder="Enter Password"
                     style={{ width: 200, margin: 10 }}
                     onChangeText={password => this.setState({ password })}
                 />
-
+                <Text>{JSON.stringify(this.state)}</Text>
                 <Button
                     title="Submit"
-                    onPress={this.login}
+                    onPress={ this.login }
                 />
             </View>
         );
